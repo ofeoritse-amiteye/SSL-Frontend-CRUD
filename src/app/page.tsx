@@ -54,9 +54,9 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full min-h-screen flex justify-center  p-4 bg-gray-100">
+    <div className="w-full min-h-screen flex justify-center p-4 bg-gray-100">
       <motion.div
-        className="w-[45%] bg-white p-6 rounded-xl shadow-lg border border-gray-200 relative"
+        className="lg:w-[45%] md:w-[60%] sm:w-[80%] w-full bg-white p-6 sm:p-4 rounded-xl shadow-lg border border-gray-200 relative"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
@@ -66,29 +66,27 @@ export default function Home() {
           backgroundSize: "100% 30px",
         }}
       >
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
-           What do you have planned for today ?
+        <h1 className="text-3xl sm:text-lg font-bold text-gray-800 text-center mb-6">
+          What do you have planned for today?
         </h1>
 
-        {/* Add Item */}
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex flex-col sm:flex-row items-center gap-3 mb-5">
           <input
             type="text"
-            className="w-full border text-black border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all bg-white"
+            className="w-full border text-black border-gray-300 rounded-lg p-3 sm:p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all bg-white"
             placeholder="Enter task..."
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
           <motion.button
             whileTap={{ scale: 0.9 }}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-all"
+            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 sm:py-2 rounded-lg transition-all"
             onClick={handleAdd}
           >
             Add
           </motion.button>
         </div>
 
-        {/* Todo Items */}
         <div className="space-y-3">
           <AnimatePresence>
             {items.map((item: Item) => (
@@ -97,25 +95,25 @@ export default function Home() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex items-center justify-between bg-white border border-gray-300 p-3 rounded-lg shadow-sm"
+                className="flex flex-wrap sm:flex-nowrap items-center justify-between bg-white border border-gray-300 p-3 rounded-lg shadow-sm"
               >
                 <input
                   type="checkbox"
                   checked={item.completed}
                   onChange={() => toggleComplete(item.id)}
-                  className="w-5 h-5 accent-green-500 cursor-pointer mr-5"
+                  className="w-6 h-6 sm:w-5 sm:h-5 accent-green-500 cursor-pointer mr-5"
                 />
 
                 {editingId === item.id ? (
                   <input
                     type="text"
-                    className="flex-grow border text-black border-gray-300 rounded-lg p-1 w-[90%] outline-none transition-all mr-5"
+                    className="flex-grow border text-black border-gray-300 rounded-lg p-2 w-[90%] outline-none transition-all"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
                   />
                 ) : (
                   <span
-                    className={`text-gray-700 font-medium flex-grow ${
+                    className={`text-gray-700 font-medium flex-grow text-sm sm:text-base ${
                       item.completed ? "line-through text-gray-400" : ""
                     }`}
                   >
@@ -123,11 +121,11 @@ export default function Home() {
                   </span>
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 mt-2 sm:mt-0">
                   {editingId === item.id ? (
                     <motion.button
                       whileTap={{ scale: 0.9 }}
-                      className="bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+                      className="bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-2 sm:py-1 rounded-lg transition-all"
                       onClick={handleUpdate}
                     >
                       Save
@@ -135,7 +133,7 @@ export default function Home() {
                   ) : (
                     <motion.button
                       whileTap={{ scale: 0.9 }}
-                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-3 py-2 sm:py-1 rounded-lg transition-all"
                       onClick={() => handleEdit(item.id, item.text)}
                     >
                       Edit
@@ -144,7 +142,7 @@ export default function Home() {
 
                   <motion.button
                     whileTap={{ scale: 0.9 }}
-                    className="bg-red-500 hover:bg-red-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+                    className="bg-red-500 hover:bg-red-600 text-white font-medium px-3 py-2 sm:py-1 rounded-lg transition-all"
                     onClick={() => {
                       dispatch(deleteItem(item.id));
                       toast.error("Task deleted!", { position: "top-center" });
