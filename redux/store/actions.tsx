@@ -16,3 +16,9 @@ export const updateItem = (id: string, newText: string) => ({
   type: ActionTypes.UPDATE_ITEM,
   payload: { id, newText },
 });
+
+export const toggleComplete = (id: string) => ({
+  type: ActionTypes.TOGGLE_COMPLETE,
+  payload: id,
+});
+
