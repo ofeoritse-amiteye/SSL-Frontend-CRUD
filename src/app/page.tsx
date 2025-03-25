@@ -1,103 +1,110 @@
-import Image from "next/image";
+"use client"
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteItem, updateItem } from "../../redux/store/actions";
+import { ActionTypes } from "../../redux/store/reducer";
+import { RootState } from "../../redux/store/store";
+import { v4 as uuidv4 } from "uuid";
+
+interface Item {
+  id: string;
+  text: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [text, setText] = useState<string>("");
+  const [editText, setEditText] = useState<string>("");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const dispatch = useDispatch();
+  const items = useSelector((state: RootState) => state.items);
+
+const handleAdd = () => {
+  if (text.trim()) {
+    dispatch({
+      type: ActionTypes.ADD_ITEM,
+      payload: { id: uuidv4(), text },
+    });
+    setText("");
+  }
+};
+
+  const handleEdit = (id: string, currentText: string) => {
+    setEditingId(id);
+    setEditText(currentText);
+  };
+
+  const handleUpdate = () => {
+    if (editText.trim() && editingId !== null) {
+      dispatch(updateItem(editingId, editText));
+      setEditingId(null);
+      setEditText("");
+    }
+  };
+
+  return (
+<div className="w-full min-h-screen flex justify-center items-center bg-gray-100 p-4 ">
+  <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-lg">
+    <h1 className="text-2xl font-semibold text-gray-700 text-center mb-6">CRUD Application</h1>
+
+    {/* Add Item */}
+    <div className="flex items-center gap-3 mb-5">
+      <input
+        type="text"
+        className="w-full border text-black border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-400 outline-none transition-all"
+        placeholder="Enter item..."
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <button
+        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-all"
+        onClick={handleAdd}
+      >
+        Add
+      </button>
     </div>
+    <div className="space-y-3">
+      {items.map((item: Item) => (
+        <div key={item.id} className="flex items-center justify-between bg-gray-50 border border-gray-200 p-3 rounded-lg shadow-sm ">
+          {editingId === item.id ? (
+            <input
+              type="text" 
+              className="flex-grow border text-black border-gray-300 rounded-lg p-1 w-[90%] outline-none transition-all mr-5"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+            />
+          ) : (
+            <span className="text-gray-700 font-medium">{item.text}</span>
+          )}
+
+          <div className="flex gap-2">
+            {editingId === item.id ? (
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+                onClick={handleUpdate}
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+                onClick={() => handleEdit(item.id, item.text)}
+              >
+                Edit
+              </button>
+            )}
+
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white font-medium px-3 py-1 rounded-lg transition-all"
+              onClick={() => dispatch(deleteItem(item.id))}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
   );
 }
